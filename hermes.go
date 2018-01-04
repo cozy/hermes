@@ -2,18 +2,19 @@ package hermes
 
 import (
 	"bytes"
-	"github.com/Masterminds/sprig"
+	"html/template"
+
 	"github.com/imdario/mergo"
 	"github.com/jaytaylor/html2text"
 	"gopkg.in/russross/blackfriday.v2"
-	"html/template"
 )
 
 // Hermes is an instance of the hermes email generator
 type Hermes struct {
-	Theme         Theme
-	TextDirection TextDirection
-	Product       Product
+	Theme            Theme
+	TextDirection    TextDirection
+	Product          Product
+	TemplateFuncsMap map[string]interface{}
 }
 
 // Theme is an interface to implement when creating a new theme
@@ -181,15 +182,17 @@ func (h *Hermes) GeneratePlainText(email Email) (string, error) {
 }
 
 func (h *Hermes) generateTemplate(email Email, tplt string) (string, error) {
-
 	err := setDefaultEmailValues(&email)
 	if err != nil {
 		return "", err
 	}
 
 	// Generate the email from Golang template
-	// Allow usage of simple function from sprig : https://github.com/Masterminds/sprig
-	t, err := template.New("hermes").Funcs(sprig.FuncMap()).Funcs(templateFuncs).Parse(tplt)
+	t := template.New("hermes").Funcs(templateFuncs)
+	if h.TemplateFuncsMap != nil {
+		t = t.Funcs(h.TemplateFuncsMap)
+	}
+	t, err = t.Parse(tplt)
 	if err != nil {
 		return "", err
 	}

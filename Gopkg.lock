@@ -8,12 +8,6 @@
   version = "v1.4.0"
 
 [[projects]]
-  name = "github.com/Masterminds/sprig"
-  packages = ["."]
-  revision = "b217b9c388de2cacde4354c536e520c52c055563"
-  version = "v2.14.1"
-
-[[projects]]
   name = "github.com/aokoli/goutils"
   packages = ["."]
   revision = "3391d3790d23d03408670993e957e8f408993c34"
